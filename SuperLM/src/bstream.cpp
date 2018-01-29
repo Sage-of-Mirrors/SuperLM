@@ -1,4 +1,4 @@
-#include "bstream.h"
+#include "SuperLM\include\bstream.h"
 #include <cstring>
 
 bStream::bStream(std::string path, Endianess ord, int rw){
