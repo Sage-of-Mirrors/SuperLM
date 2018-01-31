@@ -262,3 +262,8 @@ __pycache__/
 *.vcxproj
 *.filters
 SuperLM.sln
+SuperLMTester/ReadMe.txt
+SuperLMTester/SuperLMTester.cpp
+SuperLMTester/stdafx.cpp
+SuperLMTester/stdafx.h
+SuperLMTester/targetver.h

@@ -5,11 +5,15 @@
 namespace SuperLM {
 	class SceneNode {
 	private:
+		int m_origParentIndex;
+		int m_origPreviousSiblingIndex;
+		int m_origNextSiblingIndex;
+
 		SceneNode* m_parent;
 		SceneNode* m_previousSibling;
 		SceneNode* m_nextSibling;
 
-		std::vector<SceneNode> m_children;
+		std::vector<SceneNode*> m_children;
 
 		//Vector3 m_scale;
 		//Quaternion m_rotation;
@@ -21,6 +25,11 @@ namespace SuperLM {
 		int* m_shapeList;
 
 	public:
+		SceneNode(bStream& reader);
+		void SetNodeHierarchy(std::vector<SceneNode*>& flatList);
+		void AddChild(SceneNode* child);
+		void OutputHierarchyRecursive(int tabNo);
+
 		void RenderRecursive();
 		void WriteToStream(bStream* writer);
 		//void SerializeToSceneRecursive(aiNode* parent);
@@ -33,7 +42,7 @@ namespace SuperLM {
 		std::vector<SceneNode*> m_flatHierarchy;
 
 	public:
-		Scenegraph(bStream* reader);
+		Scenegraph(bStream& reader);
 		//Scenegraph(aiScene* scene);
 
 		void WriteToStream(bStream* writer);
