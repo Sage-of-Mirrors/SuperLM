@@ -1,4 +1,11 @@
-#include "SuperLM\include\model.h"
+#pragma once
+#include <vector>
+#ifdef __linux__
+	#include "SuperLM/include/model.h"
+#endif
+#ifdef _WIN32
+	#include "SuperLM\include\model.h"
+#endif
 
 namespace SuperLM {
 	int Model::Load(bStream& reader) {

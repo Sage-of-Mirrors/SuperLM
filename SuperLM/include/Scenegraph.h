@@ -1,6 +1,12 @@
 #pragma once
 #include <vector>
-#include "bstream.h"
+
+#ifdef __linux__
+	#include "SuperLM/include/bstream.h"
+#endif
+#ifdef _WIN32
+	#include "bstream.h"
+#endif
 
 namespace SuperLM {
 	class SceneNode {

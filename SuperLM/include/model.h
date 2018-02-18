@@ -1,5 +1,11 @@
 #pragma once
-#include "Scenegraph.h"
+
+#ifdef __linux__
+	#include "SuperLM/include/Scenegraph.h"
+#endif
+#ifdef _WIN32
+	#include "Scenegraph.h"
+#endif
 
 namespace SuperLM {
 	class Model {
