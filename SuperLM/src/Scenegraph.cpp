@@ -7,12 +7,47 @@
 
 namespace SuperLM {
 
-	SceneNode::SceneNode(bStream& reader) {
+	SceneNode::SceneNode(bStream& reader, long listStartOffset) {
 		m_origParentIndex = reader.readInt16();
 		int firstChildIndex = reader.readInt16();
 		m_origNextSiblingIndex = reader.readInt16();
 		m_origPreviousSiblingIndex = reader.readInt16();
-		char* discard = reader.readBytes(0x84); // skip the rest of the data for now
+
+		short flag = reader.readInt16();
+		reader.readInt16();
+
+		m_scale = new glm::vec3(reader.readFloat(), reader.readFloat(), reader.readFloat());
+
+		m_rotation = new glm::quat();
+		glm::vec3 scaleTemp(reader.readFloat(), reader.readFloat(), reader.readFloat());
+		m_rotation = new glm::quat(scaleTemp);
+
+		m_translation = new glm::vec3(reader.readFloat(), reader.readFloat(), reader.readFloat());
+
+		m_boundingBox = new AABB();
+		m_boundingBox->LoadBoundsFromBinSceneNode(reader);
+
+		m_shapeCount = reader.readInt16();
+
+		reader.readInt16(); // Skip padding from shape count short
+
+		int shapeListOffset = reader.readInt32();
+		long curOffset = reader.getStream().tellg();
+
+		reader.seek(listStartOffset + shapeListOffset);
+
+		for (int i = 0; i < m_shapeCount; i++) {
+			m_materialList[i] = reader.readInt16();
+			m_shapeList[i] = reader.readInt16();
+		}
+
+		reader.seek(curOffset);
+
+		// Just to make sure that data is not used. We can remove this later and just skip the rest
+		for (int i = 0; i < 56; i++) {
+			if (reader.readUInt8() != 0)
+				throw std::string("Found non-zero value in scene node init data!");
+		}
 	}
 
 	void SceneNode::SetNodeHierarchy(std::vector<SceneNode*>& flatList) {
@@ -60,7 +95,7 @@ namespace SuperLM {
 
 		for (int i = 0; i < m_nodeCount; i++)
 		{
-			m_flatHierarchy.push_back(new SceneNode(reader));
+			m_flatHierarchy.push_back(new SceneNode(reader, startPos));
 		}
 
 		for (int i = 0; i < m_nodeCount; i++)
@@ -69,6 +104,6 @@ namespace SuperLM {
 		}
 
 		m_rootNode = m_flatHierarchy[0];
-		m_rootNode->OutputHierarchyRecursive(0);
+		//m_rootNode->OutputHierarchyRecursive(0);
 	}
 }

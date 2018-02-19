@@ -6,6 +6,9 @@
 #endif
 #ifdef _WIN32
 	#include "bstream.h"
+    #include "aabb.h"
+	#include "glm\vec3.hpp"
+	#include "glm\gtc\quaternion.hpp"
 #endif
 
 namespace SuperLM {
@@ -21,17 +24,20 @@ namespace SuperLM {
 
 		std::vector<SceneNode*> m_children;
 
-		//Vector3 m_scale;
-		//Quaternion m_rotation;
-		//Vector3 m_translation;
-		//AABB m_boundingBox;
+		glm::vec3* m_scale;
+		glm::quat* m_rotation;
+		glm::vec3* m_translation;
+		AABB* m_boundingBox;
 
-		int shapeCount;
-		int* m_materialList;
-		int* m_shapeList;
+		int m_shapeCount;
+
+		// These are initialized to 32 slots just to make sure there's enough room
+		// Only the first m_shapeCount entries will ever be used
+		int m_materialList[32];
+		int m_shapeList[32];
 
 	public:
-		SceneNode(bStream& reader);
+		SceneNode(bStream& reader, long listStartOffset);
 		void SetNodeHierarchy(std::vector<SceneNode*>& flatList);
 		void AddChild(SceneNode* child);
 		void OutputHierarchyRecursive(int tabNo);
